@@ -1,0 +1,14 @@
+HR_manager
+HR_manager
+102030
+HR_MANAGER
+
+manager_1
+manager_1
+110345
+MANAGER
+
+cashier_1
+cashier_1
+543672
+CASHIER
