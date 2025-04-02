@@ -13,10 +13,10 @@ public class HRManager extends User {
      */
     public void addUser(String username, String password, String ID, UserPosition position) {
         String[] content = new String[4];
-        content[0] = username;
-        content[1] = password;
-        content[2] = ID;
-        content[3] = String.valueOf(position);
+        content[0] = "Username: " + username;
+        content[1] = "Password: "+ password;
+        content[2] = "ID: " + ID;
+        content[3] = "Position: "+ String.valueOf(position);
 
         FileHandler.addToFile("src/Users/users.txt", content);
 
@@ -58,7 +58,7 @@ public class HRManager extends User {
                     //Search the file until we reach the end
                     if ((line = br.readLine()) == null) {
                         br = new BufferedReader(new FileReader(filePath));
-                        //When we reach the end loop thorugh the file again
+                        //When we reach the end loop through the file again
                         for (int i = 1; i < lineCounter+1; i++) {
                             if ((line = br.readLine()) == null) {
                                 break;

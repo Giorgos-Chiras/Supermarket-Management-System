@@ -1,21 +1,13 @@
+Name: Fish
+ID: 213fi
+Price(€): 4.99
+Quantity: 23
+Category: MEAT_SEAFOOD
+Discount (%): 0
 
-Fish
-213fi
-4.99
-23
-MEAT_SEAFOOD
-0
-
-butter
-bu23
-3.0
-5
-DAIRY
-0
-
-Milk
-mi12
-2.5
-5
-DAIRY
-10
+Name: Milk
+ID: MI23
+Price(€): 2.99
+Quantity: 10
+Category: DAIRY
+Discount (%): 0
