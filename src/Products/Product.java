@@ -8,14 +8,18 @@ public class Product {
     private int productQuantity;
     private int productDiscount;
 
-    public Product(String productName, String productID, float productPrice, ProductCategory productCategory, int productQuantity) {
+    public Product(String productName, String productID, float productPrice, ProductCategory productCategory, int productQuantity,int productDiscount) {
         this.productName = productName;
         this.productID = productID;
-        this.productPrice = productPrice + 0.00f;
+        this.productPrice = productPrice;
         this.productCategory = productCategory;
         this.productQuantity = productQuantity;
-        productDiscount = 0;
+        this.productDiscount = productDiscount;
 
+    }
+
+    public float getDiscountAmount() {
+        return (float) Math.floor(productDiscount * productPrice)/100;
     }
 
     public void addQuantity(int quantity) {
@@ -27,17 +31,12 @@ public class Product {
     }
 
     public void setDiscount(int discount) {
-        this.productDiscount = 10;
+        this.productDiscount = discount;
     }
 
 
     public float getFinalPrice() {
-        return (productPrice * (100 - productDiscount) / 100) + 0.00f;
-    }
-
-
-    public void setProductDiscount(int productDiscount) {
-        this.productDiscount = productDiscount;
+        return (float) Math.floor(productPrice * (100 - productDiscount))/100;
     }
 
     //Getters
@@ -79,8 +78,9 @@ public class Product {
     }
 
     public String toString() {
+        String formattedPrice = String.format("%.2f", productPrice);
         return "Name: " + productName + ", ID: " + productID + ", Quantity: "
-                + productQuantity + ", Price: €" + productPrice;
+                + productQuantity + ", Price: €" + formattedPrice + ", Discount: " +productDiscount + "%";
     }
 
 }

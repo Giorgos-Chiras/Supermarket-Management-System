@@ -6,14 +6,19 @@ Position: HR_MANAGER
 Username: 1
 Password: 1
 ID: 2
-Position: MANAGER
-
-Username: manager_1
-Password: manager_1
-ID: ma23
-Position: MANAGER
+Position: CASHIER
 
 Username: cashier_1
 Password: cashier_1
 ID: ca44
 Position: CASHIER
+
+Username: manager_1
+Password: manager_1
+ID: ma12
+Position: MANAGER
+
+Username: TestUser
+Password: testing
+ID: testuser
+Position: MANAGER

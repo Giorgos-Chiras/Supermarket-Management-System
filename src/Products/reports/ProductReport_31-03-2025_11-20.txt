@@ -1,7 +1,0 @@
-			REPORT FOR 31-03-2025 @ 11-20
-
-NAME            ID         PRICE   QUANTITY      CATEGORY             DISCOUNT       
-
-Fish            213fi      4.99    23            MEAT_SEAFOOD         0              
-butter          bu23       3.0     5             DAIRY                0              
-Milk            mi12       2.5     5             DAIRY                0              

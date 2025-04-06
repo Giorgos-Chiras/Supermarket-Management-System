@@ -1,0 +1,31 @@
+Closure Report 06-04-2025@15-11
+
+**PRODUCTS STOCK**
+
+Product Name              Quantity  
+Spaghetti Pasta           30        
+Bananas                   60        
+Red Apples                21        
+Chicken Breast            2         
+Herbal Shampoo            25        
+Frozen French Fries       6         
+Frozen Mixed Berries      4         
+Nescafe                   8         
+Cheddar Cheese (200g)     14        
+Cola (2L Bottle)          28        
+Paper Towels (6 Pack)     10        
+Salmon Fillet             0         
+Fresh Baguette            13        
+Croissant (Pack of 4)     0         
+Orange Juice (1L)         12        
+Whole Milk                8         
+
+** CASHIERS **
+
+Cashier              Total Sales
+cashier_1             34.91    
+
+** CUSTOMERS **
+
+Name                 Total Spend     Points Earned   Points Used    
+Andreas Georgiou     10              0               1              

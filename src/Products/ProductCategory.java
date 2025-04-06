@@ -9,5 +9,6 @@ public enum ProductCategory {
     FROZEN,
     PANTRY,
     HOUSEHOLD,
-    PERSONAL_CARE
+    PERSONAL_CARE,
+    NONE
 }

@@ -1,6 +1,9 @@
 package Users;
+
 import java.io.*;
+
 import FileHandler.*;
+
 import java.util.HashMap;
 
 public class HRManager extends User {
@@ -12,11 +15,12 @@ public class HRManager extends User {
      * Adds a user into the system
      */
     public void addUser(String username, String password, String ID, UserPosition position) {
-        String[] content = new String[4];
-        content[0] = "Username: " + username;
-        content[1] = "Password: "+ password;
-        content[2] = "ID: " + ID;
-        content[3] = "Position: "+ String.valueOf(position);
+        String[] content = new String[]{
+                "Username: " + username,
+                "Password: " + password,
+                "ID: " + ID,
+                "Position: " + position
+        };
 
         FileHandler.addToFile("src/Users/users.txt", content);
 
@@ -42,13 +46,14 @@ public class HRManager extends User {
     }
 
     /**
-     Searches the users file for a user and deletes it, and the inforamtion about the user
-    */
+     * Searches the users file for a user and deletes it, and the information about the user
+     */
     public void deleteUser(String searchKey) {
-        String filePath = "src/users.txt";
+        //TODO: Fix this
+        String filePath = "src/Users/users.txt";
         int[] deletedLines = new int[5];  //Keep the number of the liens we want to delete
         int lineCounter = 0;
-        BufferedReader br = null;
+        BufferedReader br;
         try {
             br = new BufferedReader(new FileReader(filePath));
             String line;
@@ -59,7 +64,7 @@ public class HRManager extends User {
                     if ((line = br.readLine()) == null) {
                         br = new BufferedReader(new FileReader(filePath));
                         //When we reach the end loop through the file again
-                        for (int i = 1; i < lineCounter+1; i++) {
+                        for (int i = 1; i < lineCounter + 1; i++) {
                             if ((line = br.readLine()) == null) {
                                 break;
                             }
@@ -67,13 +72,12 @@ public class HRManager extends User {
                                 If we find the first line we need to delete then thant means we need to delete it and 4 more
                                 So we just skip the next 5 lines as to not add them to the file
                              */
-                            else if(i == deletedLines[0]){
-                                //Skip all of the deleted lines
+                            else if (i == deletedLines[0]) {
+                                //Skip all the deleted lines
                                 for (int j = 0; j < deletedLines.length - 1; j++) {
-                                    line = br.readLine();
+                                    br.readLine();
                                 }
-                            }
-                            else{
+                            } else {
                                 //Line is needed
                                 notDeleted.append(line).append("\n");
                             }
@@ -81,23 +85,27 @@ public class HRManager extends User {
                         br.close();
                         //Clear the file and write all the liens we don't delete to our file
                         FileWriter w = new FileWriter(filePath);
+                        System.out.println(notDeleted);
                         w.write(notDeleted.toString());
                         w.close();
                         break;
                     } else {
                         lineCounter++;
+                        if (!line.isEmpty()){
+                            line = line.split(": ")[1];
+                        }
                         //If search key is username
                         if (line.equals(searchKey) && lineCounter % 5 == 1) {
                             for (int i = 0; i < 5; i++) {
                                 deletedLines[i] = lineCounter;
-                                line = br.readLine();
+                                br.readLine();
                                 lineCounter++;
                             }
                             //If search key is ID
                         } else if (line.equals(searchKey) && lineCounter % 5 == 3) {
                             for (int i = -2; i < 3; i++) {
                                 deletedLines[i + 2] = lineCounter + i;
-                                line = br.readLine();
+                                br.readLine();
                             }
                             lineCounter += 3;
                         }

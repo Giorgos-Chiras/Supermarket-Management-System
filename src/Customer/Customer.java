@@ -1,23 +1,25 @@
 package Customer;
 
-import java.util.Objects;
-
 public class Customer {
-    private String name;
-    private String email;
-    private String phone;
-    BonusCard bonusCard = null;
+    private final String name;
+    private final String email;
+    private final String phone;
+    BonusCard bonusCard;
 
     public Customer(String name, String email, String phone) {
         this.name = name;
         this.email = email;
         this.phone = phone;
+        bonusCard = new BonusCard(0,0);
     }
 
-
-    public float calculateDiscount() {
-        return 0;
+    public Customer(String name, String email, String phone,float totalSpend, int points) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        bonusCard = new BonusCard(points, totalSpend);
     }
+
 
     //General functions
     public String getName() {
@@ -29,6 +31,10 @@ public class Customer {
     public String getPhone() {
         return phone;
     }
+
+    public BonusCard getBonusCard() {
+        return bonusCard;
+    }
     @Override
     public int hashCode() {
         return phone.hashCode();
@@ -39,6 +45,6 @@ public class Customer {
     }
 
     public String toString() {
-        return "Name: " + this.getName() + ", Phone: " + this.getPhone() + ", Email: " + this.getEmail();
+        return "Name: " + this.getName() + " Phone: " + this.getPhone() + " Email: " + this.getEmail();
     }
 }

@@ -11,8 +11,8 @@ import java.util.HashSet;
 
 public class FileHandler {
     //Default Constructor
-    public FileHandler() {}
-
+    public FileHandler() {
+    }
 
     public static void addToFile(String filePath, String[] content) {
         try {
@@ -20,7 +20,7 @@ public class FileHandler {
 
             //Check if the file is empty and add a newline if it isn't
             BufferedReader br = new BufferedReader(new FileReader(filePath));
-            if(br.readLine() != null){
+            if (br.readLine() != null) {
                 w.write("\n");
 
             }
@@ -35,6 +35,8 @@ public class FileHandler {
             throw new RuntimeException(e);
         }
     }
+
+
 
     /**
      * Parses users file and adds all users to hashmap
@@ -72,7 +74,6 @@ public class FileHandler {
                 }
 
             } catch (IOException e) {
-                System.err.println(e);
                 throw new RuntimeException(e);
             }
             //Create object based on the position of user
@@ -134,10 +135,9 @@ public class FileHandler {
                     discount = Integer.parseInt(line.split(": ")[1]);
 
                 }
-                tempProduct = new Product(name,id,price,category,quantity);
+                tempProduct = new Product(name, id, price, category, quantity, discount);
 
             } catch (IOException e) {
-                System.err.println(e);
                 throw new RuntimeException(e);
             }
             //Create object based on the position of user
@@ -162,6 +162,8 @@ public class FileHandler {
         String name;
         String phone;
         String email;
+        float totalSpend;
+        int points;
 
         String line;
         while (true) {
@@ -178,12 +180,15 @@ public class FileHandler {
                     line = br.readLine();
                     email = line.split(": ")[1];
                     line = br.readLine();
+                    totalSpend = Float.parseFloat(line.split(": ")[1]);
+                    line = br.readLine();
+                    points = Integer.parseInt(line.split(": ")[1]);
+
 
                 }
-                tempCustomer = new Customer(name,phone,email);
+                tempCustomer = new Customer(name, email, phone, totalSpend, points);
 
             } catch (IOException e) {
-                System.err.println(e);
                 throw new RuntimeException(e);
             }
             //Create object based on the position of user
