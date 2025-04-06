@@ -1,24 +1,14 @@
 Username: HR_manager
 Password: HR_manager
-ID: 4452
+ID: HR01
 Position: HR_MANAGER
-
-Username: 1
-Password: 1
-ID: 2
-Position: CASHIER
 
 Username: cashier_1
 Password: cashier_1
-ID: ca44
+ID: CA01
 Position: CASHIER
 
 Username: manager_1
 Password: manager_1
-ID: ma12
-Position: MANAGER
-
-Username: TestUser
-Password: testing
-ID: testuser
+ID: MA01
 Position: MANAGER
