@@ -1,9 +1,13 @@
 package Users;
 
+/**
+ * Base class which all users are based off with some basic functions
+ */
 public class User {
     private final String name;
     private final UserPosition position;
     private final String id;
+
 
     public User(String name, UserPosition position, String id) {
         this.name = name;

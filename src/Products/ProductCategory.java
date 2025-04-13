@@ -1,5 +1,8 @@
 package Products;
 
+/**
+    Enum that contains all categories for products
+ */
 public enum ProductCategory {
     PRODUCE,
     DAIRY,

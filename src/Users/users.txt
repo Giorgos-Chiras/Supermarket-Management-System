@@ -1,14 +1,15 @@
 Username: HR_manager
-Password: HR_manager
-ID: HR01
+Password: 9e68a5f2b10ea224835344b22a32323105f
+ID: HR_01
 Position: HR_MANAGER
 
-Username: cashier_1
-Password: cashier_1
-ID: CA01
-Position: CASHIER
-
 Username: manager_1
-Password: manager_1
+Password: e7923c23c8154f162a56c19de27b16ff
 ID: MA01
 Position: MANAGER
+
+
+Username: cashier_1
+Password: d3921679221e1999953721311f4bd78
+ID: CA01
+Position: CASHIER

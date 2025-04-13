@@ -1,9 +1,6 @@
 package Users;
-
 import java.io.*;
-
 import FileHandler.*;
-
 import java.util.HashMap;
 
 public class HRManager extends User {
@@ -24,8 +21,11 @@ public class HRManager extends User {
 
         FileHandler.addToFile("src/Users/users.txt", content);
 
-
     }
+
+    /**
+     * Searches if a user exists in teh systems and prints information if it does
+     */
 
     public User searchUser(String searchKey, HashMap<User, String> users) {
         //Create a new user with ID and name of the Search key
@@ -39,6 +39,9 @@ public class HRManager extends User {
         return null;
     }
 
+    /**
+     * Prints all users in the system
+     */
     public void printUsers(HashMap<User, String> users) {
         for (User user : users.keySet()) {
             System.out.println(user);
@@ -49,7 +52,6 @@ public class HRManager extends User {
      * Searches the users file for a user and deletes it, and the information about the user
      */
     public void deleteUser(String searchKey) {
-        //TODO: Fix this
         String filePath = "src/Users/users.txt";
         int[] deletedLines = new int[5];  //Keep the number of the liens we want to delete
         int lineCounter = 0;
@@ -103,6 +105,7 @@ public class HRManager extends User {
                             }
                             //If search key is ID
                         } else if (line.equals(searchKey) && lineCounter % 5 == 3) {
+                            System.out.println(line);
                             for (int i = -2; i < 3; i++) {
                                 deletedLines[i + 2] = lineCounter + i;
                                 br.readLine();

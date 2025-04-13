@@ -4,11 +4,11 @@ import Products.Product;
 import Products.ProductCategory;
 import Transaction.Transaction;
 import Users.*;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import Hasher.Hasher;
 
 
 class SystemHandler {
@@ -20,11 +20,29 @@ class SystemHandler {
     private final HashMap<Cashier, Float> cashiers = new HashMap<>();
     private final HashMap<Customer, float[]> customerPoints = new HashMap<>();
 
+    /**
+        Constructor tha parses files nad calls login
+     */
     SystemHandler() {
+        //Parse all files
         FileHandler fh = new FileHandler();
         fh.parseUserFile(users);
         fh.parseProductFile(products);
         fh.parseCustomerFile(customers);
+
+        //If no users in the system then create an HR Manager
+        if(users.isEmpty()){
+            String password = "HR_manager";
+            password = Hasher.hash(password);
+
+            HRManager temp1 = new HRManager("temp", "0");
+
+            temp1.addUser("HR_manager",password, "HR_01", UserPosition.HR_MANAGER);
+            System.out.println("No users found");
+            System.out.println("Default user added with username HR_manager and " +
+                    "password HR_manager");
+            fh.parseUserFile(users);
+        }
 
         //Update files so they are always in the order they are in the hashmap/set
         Manager manager = new Manager("", "");
@@ -44,6 +62,10 @@ class SystemHandler {
         System.out.println("Exiting System");
     }
 
+    /**
+        Function that gets login details and calls authenticates to see if login details
+        are correct, then get proper menu to display
+     */
     private void login() {
         //Login and authenticate system
         Scanner sc = new Scanner(System.in);
@@ -80,20 +102,31 @@ class SystemHandler {
      * Also checks position to log into relevant system
      */
     private boolean authenticate(String username, String password) {
-        if (username == null || password == null) {
-            return false;
-        }
+        //Get the hashed password
+        password = Hasher.hash(password);
         //Searches hashmap to find user that matches username given
         User searchKey = new User(username, UserPosition.NONE, "0");
-        for (User tempUser : users.keySet()) {
-            if (tempUser.equals(searchKey)) {
-                if (users.get(tempUser).equals(password)) {
-                    user = tempUser;
-                    return true;
+
+        //Check if user exists
+        if(users.containsKey(searchKey)){
+            //Check if password is hashed
+            if(password.equals(users.get(searchKey))){
+                //Iterate through hashmap to get user
+                for(User user1 : users.keySet()){
+                    if(user1.equals(searchKey)){
+                        user = user1;
+                        return true;
+                    }
                 }
             }
+            else{
+                System.out.println("Wrong password");
+            }
         }
-        System.out.println("Wrong username or password");
+        else {
+            System.out.println("User not found");
+        }
+
         return false;
     }
 
@@ -139,7 +172,11 @@ class SystemHandler {
                         break;
                     }
 
+                    //Hash the password before storing it
+                    password=Hasher.hash(password);
                     hrManager.addUser(username, password, ID, position);
+
+                    //Get position and upcast to correct class
                     if(position == UserPosition.CASHIER) {
                         users.put(new Cashier(username,  ID), password);
                     }
@@ -153,9 +190,12 @@ class SystemHandler {
                     System.out.println("Successfully added user " + username + " with ID " + ID);
                     break;
 
+                //Print all users
                 case 2:
                     hrManager.printUsers(users);
                     break;
+
+                //Search for user
                 case 3: {
                     System.out.print("Enter username or ID: ");
                     String searchKey = sc.nextLine();
@@ -168,15 +208,19 @@ class SystemHandler {
                     }
                     break;
                 }
+
+                //Delete user based on ID or username
                 case 4:
                     System.out.print("Enter username or ID: ");
                     String searchKey = sc.nextLine();
+                    //Search and get user
                     User searchUser = hrManager.searchUser(searchKey, users);
                     if (searchUser != null) {
                         if (searchUser.equals(user)) {
                             System.out.println("Can't delete user that is currently using the system");
                             break;
                         }
+                        //Delete from file and remove from HashMap
                         hrManager.deleteUser(searchKey);
                         users.remove(searchUser);
                         System.out.println("Successfully deleted user " + searchKey);
@@ -184,14 +228,13 @@ class SystemHandler {
                         System.out.println("User not found");
                     }
                     break;
-
+                //Logout
                 case 5:
                     System.out.println("Logging out...\n");
                     return;
             }
         }
     }
-
 
     /**
      * MANAGER MENU
@@ -223,7 +266,7 @@ class SystemHandler {
         Scanner sc;
         Manager manager = ((Manager) user);
         while (true) {
-
+            //Print menu
             System.out.println();
             System.out.println("1. Add new product");
             System.out.println("2. Add to the stock of an item");
@@ -256,9 +299,15 @@ class SystemHandler {
                     ProductCategory category = getCategory();
 
                     Product newProduct = new Product(name, id, price, category, quantity, 0);
+                    //Check if product already exists
+                    if(products.contains(newProduct)) {
+                        System.out.println("Product already exists");
+                        break;
+                    }
                     products.add(newProduct);
                     manager.addProduct(newProduct);
                     manager.updateProductFile(products);
+                    System.out.println("Successfully added product");
                     break;
                 }
                 //Add to the quantity of a product
@@ -268,7 +317,7 @@ class SystemHandler {
                     if (product != null) {
                         System.out.print("Enter quantity to be added: ");
                         int quantity = sc.nextInt();
-                        manager.addQuantity(product, quantity);
+                        manager.addStock(product, quantity);
                         manager.updateProductFile(products);
                     }
                     break;
@@ -280,7 +329,7 @@ class SystemHandler {
                     if (product != null) {
                         System.out.print("Enter quantity to be removed: ");
                         int quantity = sc.nextInt();
-                        manager.removeQuantity(product, quantity);
+                        manager.removeStock(product, quantity);
                         manager.updateProductFile(products);
                     }
                     break;
@@ -304,8 +353,9 @@ class SystemHandler {
                     Product product = getProduct();
                     if (product != null) {
                         manager.setWeeklyDiscount(product);
+                        System.out.println("Successfully set weekly discount");
+                        manager.updateProductFile(products);
                     }
-                    manager.updateProductFile(products);
                     break;
                 }
                 //Remove product from weekly discounts
@@ -313,8 +363,10 @@ class SystemHandler {
                     Product product = getProduct();
                     if (product != null) {
                         manager.removeWeeklyDiscount(product);
+                        System.out.println("Successfully removed weekly discount");
+                        manager.updateProductFile(products);
+
                     }
-                    manager.updateProductFile(products);
                     break;
                 }
                 //Create a report based on current stock
@@ -329,6 +381,9 @@ class SystemHandler {
         }
     }
 
+    /**
+        Menu with all options that have to do with customers
+     */
     private void managerCustomerMenu() {
         Scanner sc = new Scanner(System.in);
         Manager manager = ((Manager) user);
@@ -344,7 +399,9 @@ class SystemHandler {
 
 
             switch (choice) {
+                //Add customer
                 case 1: {
+                    //Get customer details
                     System.out.print("Enter customer name: ");
                     String name = sc.nextLine();
                     System.out.print("Enter customer phone number: ");
@@ -353,6 +410,7 @@ class SystemHandler {
                     String email = sc.nextLine();
 
                     Customer newCustomer = new Customer(name, email, phone);
+                    //Check if customer already exists
                     if (customers.contains(newCustomer)) {
                         System.out.println("Phone number already registered to another customer. Cant register customer");
                         break;
@@ -368,11 +426,14 @@ class SystemHandler {
                     System.out.println("Successfully added customer " + newCustomer.getName() +"\n");
                     break;
                 }
+
+                //Print all customers
                 case 2: {
                     manager.printAllCustomer(customers);
                     System.out.println();
                     break;
                 }
+                //Search for customer
                 case 3: {
                     System.out.print("Enter phone number: ");
                     String phone = sc.nextLine();
@@ -385,38 +446,44 @@ class SystemHandler {
                     break;
                 }
 
+                //Create customer report
                 case 4: {
                     manager.createCustomerReport(customers);
-                    System.out.println("Customer report created\n");
+                    System.out.println("Successfully created customer report created\n");
                     break;
                 }
+                //Exit the menu
                 case 5: {
-                    //Exits the menu
                     return;
                 }
             }
         }
-
     }
 
+    /**
+      CASHIER MENU
+     */
     private void displayCashierMenu() {
         System.out.println("** CASHIER **");
 
         Scanner sc;
         Cashier cashier = ((Cashier) user);
         while (true) {
-
+            //Print menu
             System.out.println("1. Make a transaction");
             System.out.println("2. Exit");
             int choice = getChoice(1, 2);
 
             switch (choice) {
 
+                //Make a transaction
                 case 1: {
                     sc = new Scanner(System.in);
+                    //Add cashier to the cashiers of the day
                     if (!cashiers.containsKey(cashier)) {
                         cashiers.put(cashier, 0f);
                     }
+                    //Create new transaction
                     Transaction transaction = new Transaction(cashier);
                     Product product;
                     float total = 0;
@@ -435,7 +502,7 @@ class SystemHandler {
                             //Ask for bonus card
                             char ch;
                             do {
-                                //Bonus card
+                                //Get bonus card
                                 System.out.print("Does customer have a bonus card? (Y/N): ");
                                 sc = new Scanner(System.in);
                                 ch = sc.next().charAt(0);
@@ -496,8 +563,7 @@ class SystemHandler {
                                         continue;
                                     }
                                 }
-                                //Finish transaction
-
+                                //Finish transaction and create receipt
                                 transaction.createReceipt();
                                 if (cashiers.containsKey(cashier)) {
                                     Float cashierTotal = cashiers.get(cashier);
@@ -517,6 +583,7 @@ class SystemHandler {
                         //Check if quantity is available and remove it
                         if (product.getProductQuantity() >= quantity) {
                             transaction.addProduct(product, quantity);
+                            //Convert total to 2 decimal points
                             total += quantity * product.getFinalPrice();
                             product.subtractQuantity(quantity);
 
@@ -531,6 +598,7 @@ class SystemHandler {
                     manager.updateCustomerFile(customers);
                     break;
                 }
+                //Logout
                 case 2:
                     System.out.println("Logging out\n");
                     return;
@@ -538,6 +606,9 @@ class SystemHandler {
         }
     }
 
+    /**
+        Helper function that asks user for input from min - max
+     */
     private int getChoice(int min, int max) {
         Scanner sc = new Scanner(System.in);
         int choice;
@@ -599,7 +670,12 @@ class SystemHandler {
         return ProductCategory.values()[categoryChoice - 1];
     }
 
+    /**
+      Create a report of waht happened from whent the system started until it closed
+      Includes customer of the day details, cashiers of the day details and product report
+     */
     private void createClosureReport() {
+        //Create file name
         String date = new SimpleDateFormat("dd-MM-yyy").format(new Date());
         String time = new SimpleDateFormat("HH:mm").format(new Date());
         time = time.replace(":", "-");
@@ -608,6 +684,7 @@ class SystemHandler {
         String filePath = "src/closure_reports/" + fileName;
 
         try {
+            //Write product report
             FileWriter w = new FileWriter(filePath);
             w.write("\t\tCLOSURE REPORT " + date + " @ " + time.replace("-", ":") + "\n");
             w.write("\n\n**PRODUCTS STOCK**\n\n");
@@ -644,7 +721,7 @@ class SystemHandler {
                 }
             }
             w.close();
-            System.out.println("\n Closure report created\n");
+            System.out.println("\nClosure report created\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

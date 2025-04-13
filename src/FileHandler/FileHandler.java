@@ -9,11 +9,20 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+    Helper function to handle files
+ */
 public class FileHandler {
-    //Default Constructor
+    /**
+        Default constructor
+     */
     public FileHandler() {
     }
 
+    /**
+        Adds strings to a file
+        Each element of array is a new line
+     */
     public static void addToFile(String filePath, String[] content) {
         try {
             FileWriter w = new FileWriter(filePath, true);
@@ -37,7 +46,6 @@ public class FileHandler {
     }
 
 
-
     /**
      * Parses users file and adds all users to hashmap
      */
@@ -54,14 +62,17 @@ public class FileHandler {
         String id;
         UserPosition position;
         String line;
+        //Get all elements of a user
         while (true) {
             User tempuser = null;
             try {
                 if ((line = br.readLine()) == null)
                     break;
+                //Skip newline
                 else if (line.isEmpty()) {
                     continue;
                 } else {
+                    //Split the line to get only relevant information
                     username = line.split(": ")[1];
                     line = br.readLine();
                     password = line.split(": ")[1];
@@ -69,8 +80,6 @@ public class FileHandler {
                     id = line.split(": ")[1];
                     line = br.readLine();
                     position = UserPosition.valueOf(line.split(": ")[1]);
-
-
                 }
 
             } catch (IOException e) {
@@ -98,6 +107,9 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Parses products file and adds all products to hashset
+     */
     public void parseProductFile(HashSet<Product> products) {
         String filePath = "src/Products/products.txt";
         BufferedReader br;
@@ -114,14 +126,17 @@ public class FileHandler {
         int discount;
 
         String line;
+        //Read file and get information
         while (true) {
             Product tempProduct;
             try {
                 if ((line = br.readLine()) == null)
                     break;
+                //Skip newline
                 else if (line.isEmpty()) {
                     continue;
                 } else {
+                    //Split line to get only relevant information
                     name = line.split(": ")[1];
                     line = br.readLine();
                     id = line.split(": ")[1];
@@ -140,9 +155,8 @@ public class FileHandler {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            //Create object based on the position of user
 
-            //Add object to hashmap if it doesn't exist yet
+            //Add object to hashset if it doesn't exist yet
             if (products.contains(tempProduct)) {
                 System.out.println("Couldn't add product " + tempProduct.getProductID() + " as a product with that ID already exists");
                 continue;
@@ -151,6 +165,9 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Parse customer file and add customers to the hashset
+     */
     public void parseCustomerFile(HashSet<Customer> customers) {
         String filePath = "src/Customer/customers.txt";
         BufferedReader br;
@@ -166,14 +183,17 @@ public class FileHandler {
         int points;
 
         String line;
+        //Read file
         while (true) {
             Customer tempCustomer;
             try {
                 if ((line = br.readLine()) == null)
                     break;
+                //Skip newline
                 else if (line.isEmpty()) {
                     continue;
                 } else {
+                    //Split line to egt only relevant information
                     name = line.split(": ")[1];
                     line = br.readLine();
                     phone = line.split(": ")[1];
@@ -191,9 +211,7 @@ public class FileHandler {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            //Create object based on the position of user
-
-            //Add object to hashmap if it doesn't exist yet
+            //Add customer to hashset if it doesn't exist yet
             if (customers.contains(tempCustomer)) {
                 System.out.println("Couldn't add customer " + tempCustomer.getName() + " as a product with that ID already exists");
                 continue;
