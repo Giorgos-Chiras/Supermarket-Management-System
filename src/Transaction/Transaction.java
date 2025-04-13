@@ -3,6 +3,7 @@ package Transaction;
 import Customer.Customer;
 import Products.Product;
 import Users.Cashier;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -80,7 +81,7 @@ public class Transaction {
             FileWriter[] writers = new FileWriter[]{receiptWriter, customerWriter, cashierWriter};
 
             for (FileWriter writer : writers) {
-                if(writer == null){
+                if (writer == null) {
                     continue;
                 }
                 writer.write("\n");
@@ -92,7 +93,7 @@ public class Transaction {
             int cnt = 0;
             float total = 0;
             for (FileWriter writer : writers) {
-                if (writer == null){
+                if (writer == null) {
                     continue;
                 }
                 String formattedTittle = String.format("%-35s %-20s %-10s %-8s %-15s %-10s %-15s",
@@ -103,19 +104,21 @@ public class Transaction {
                     int productAmount = products.get(product);
                     String formattedContent = String.format("%-35s %-20s %-10s %-8s %-15s %-10s %-15s",
                             product.getProductName(), product.getProductID(), productAmount,
-                            product.getProductPrice(), product.getProductPrice() * productAmount,
-                            product.getDiscountAmount() * productAmount, product.getFinalPrice() * productAmount);
+                            String.format("%.2f", product.getProductPrice()),
+                            String.format("%.2f", product.getProductPrice() * productAmount),
+                            String.format("%.2f", product.getDiscountAmount() * productAmount),
+                            String.format("%.2f", product.getFinalPrice() * productAmount));
                     writer.write(formattedContent);
-                    if(cnt == 0) {
+                    if (cnt == 0) {
                         total += product.getFinalPrice() * productAmount;
                         writer.write("\n");
-                        writer.write("Current Total: " + total);
+                        writer.write("Current Total: " + String.format("%.2f", total));
                     }
                 }
                 cnt++;
                 writer.write("\n");
                 writer.write("Reward points used: " + discount + "\n");
-                writer.write("Final Amount: " + calculateFinalAmount() + "\n");
+                writer.write("Final Amount: " + String.format("%.2f", calculateFinalAmount()) + "\n");
                 writer.close();
             }
             receiptWriter.close();

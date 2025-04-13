@@ -498,7 +498,7 @@ class SystemHandler {
                         //Exiting
                         if (product.getProductID().equals("-1")) {
                             System.out.println("Completing Transaction");
-                            System.out.println("Final Total: €" + total);
+                            System.out.println("Final Total: €" + String.format("%.2f",total));
                             //Ask for bonus card
                             char ch;
                             do {
@@ -507,7 +507,7 @@ class SystemHandler {
                                 sc = new Scanner(System.in);
                                 ch = sc.next().charAt(0);
                                 Customer currCustomer;
-                                if (ch == 'Y') {
+                                if (ch == 'Y' || ch == 'y') {
                                     do {
                                         //Get the customer if customer has bonus card
                                         System.out.print("Enter customer phone number: ");
@@ -571,7 +571,7 @@ class SystemHandler {
                                 } else {
                                     cashiers.put(cashier, total);
                                 }
-                                System.out.println("Final Total: " + total);
+                                System.out.println("Final Total: €" + String.format("%.2f",total));
                                 System.out.println("Transaction Completed");
                                 break;
                             } while (true);
@@ -585,12 +585,13 @@ class SystemHandler {
                             transaction.addProduct(product, quantity);
                             //Convert total to 2 decimal points
                             total += quantity * product.getFinalPrice();
+                            total = (float) (Math.round(total * 100.0) / 100.0);
                             product.subtractQuantity(quantity);
 
                         } else {
                             System.out.println("Only " + product.getProductQuantity() + " available.Transaction not completed");
                         }
-                        System.out.println("Current total: €" + total);
+                        System.out.println("Current total: €" + String.format("%.2f",total));
                     }
                     //Update the products file
                     Manager manager = new Manager("", "");
@@ -671,7 +672,7 @@ class SystemHandler {
     }
 
     /**
-      Create a report of waht happened from whent the system started until it closed
+      Create a report of what happened from when the system started until it closed
       Includes customer of the day details, cashiers of the day details and product report
      */
     private void createClosureReport() {
@@ -704,7 +705,7 @@ class SystemHandler {
                 w.write(formattedCashierTitle + "\n");
                 for (Cashier cashier : cashiers.keySet()) {
                     String formattedCashier = String.format("%-20s %-10s", cashier.getName(),
-                            " " + cashiers.get(cashier));
+                            " " + String.format("%.2f",cashiers.get(cashier)));
                     w.write(formattedCashier);
                 }
             }
@@ -716,7 +717,7 @@ class SystemHandler {
                 w.write(formattedCustomerTitle + "\n");
                 for (Customer customer : customerPoints.keySet()) {
                     String formattedCustomer = String.format("%-20s %-15s %-15s %-15s",
-                            customer.getName(), customerPoints.get(customer)[2], (int) customerPoints.get(customer)[0], (int) customerPoints.get(customer)[1]);
+                            customer.getName(), String.format("%.2f",customerPoints.get(customer)[2]), (int) customerPoints.get(customer)[0], (int) customerPoints.get(customer)[1]);
                     w.write(formattedCustomer + "\n");
                 }
             }

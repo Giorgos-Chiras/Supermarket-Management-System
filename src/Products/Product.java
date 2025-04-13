@@ -27,7 +27,8 @@ public class Product {
         Returns the price amount of the discount
      */
     public float getDiscountAmount() {
-        return (float) Math.floor(productDiscount * productPrice)/100;
+        float discount = productPrice * (productDiscount / 100.0f);
+        return Math.round(discount * 100) / 100.0f;
     }
 
     /**
@@ -54,8 +55,10 @@ public class Product {
         Get price minus the discount
      */
     public float getFinalPrice() {
-        return (float) Math.floor(productPrice * (100 - productDiscount))/100;
+        float price = productPrice * (1 - productDiscount / 100.0f);
+        return Math.round(price * 100) / 100.0f;
     }
+
 
     /**
      Getter functions

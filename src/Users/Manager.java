@@ -218,7 +218,7 @@ public class Manager extends User {
                 "Name: " + customer.getName(),
                 "Phone number: " + customer.getPhone(),
                 "Email: " + customer.getEmail(),
-                "Total Spend: " + customer.getBonusCard().getTotalSpend(),
+                "Total Spend: " + String.format("%.2f",customer.getBonusCard().getTotalSpend()).replace(",", "."),
                 "Reward Points: " + customer.getBonusCard().getPoints()
         };
         addToFile(filePath, content);
@@ -277,7 +277,7 @@ public class Manager extends User {
             name[i] = customerArray[i].getName();
             phone[i] = customerArray[i].getPhone();
             email[i] = customerArray[i].getEmail();
-            totalSpend[i] = String.valueOf(customerArray[i].getBonusCard().getTotalSpend());
+            totalSpend[i] = String.format("%.2f",customerArray[i].getBonusCard().getTotalSpend());
             points[i] = String.valueOf(customerArray[i].getBonusCard().getPoints());
         }
 
