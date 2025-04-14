@@ -21,7 +21,7 @@ public class BonusCard {
         totalSpend += orderSpend;
         //Check if customer earned new points
         if ((int) (oldTotalSpend / 100) < (int) (totalSpend / 100)) {
-            points +=1;
+            points +=(int) (totalSpend / 100) - (int) (oldTotalSpend / 100);
         }
 
     }

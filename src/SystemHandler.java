@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import Hasher.Hasher;
 
+import static java.util.Collections.max;
+
 
 class SystemHandler {
 
@@ -290,11 +292,31 @@ class SystemHandler {
                     System.out.print("Enter product ID: ");
                     String id = sc.nextLine();
 
+                    //Get price and ensure proper price
                     System.out.print("Enter product price: ");
-                    float price = sc.nextFloat();
+                    float price;
+                    while(true) {
+                        try {
+                            price = sc.nextFloat();
+                        } catch (Exception e) {
+                            System.out.println("Invalid price entered");
+                           continue;
+                        }
+                        break;
+                    }
 
+                    //Get quantity and ensure proper quantity
                     System.out.print("Enter product quantity: ");
-                    int quantity = sc.nextInt();
+                    int quantity;
+                    while(true) {
+                        try {
+                            quantity = sc.nextInt();
+                        } catch (Exception e) {
+                            System.out.println("Invalid quantity");
+                            continue;
+                        }
+                        break;
+                    }
 
                     ProductCategory category = getCategory();
 
@@ -316,7 +338,14 @@ class SystemHandler {
                     Product product = getProduct();
                     if (product != null) {
                         System.out.print("Enter quantity to be added: ");
-                        int quantity = sc.nextInt();
+                        int quantity;
+                        try {
+                            quantity = sc.nextInt();
+                        }catch(Exception e) {
+                            System.out.println("Invalid quantity");
+                            continue;
+                        }
+
                         manager.addStock(product, quantity);
                         manager.updateProductFile(products);
                     }
@@ -328,7 +357,16 @@ class SystemHandler {
                     Product product = getProduct();
                     if (product != null) {
                         System.out.print("Enter quantity to be removed: ");
-                        int quantity = sc.nextInt();
+
+                        //Get quantity
+                        int quantity;
+                        try {
+                            quantity = sc.nextInt();
+                        }catch(Exception e) {
+                            System.out.println("Invalid quantity");
+                            continue;
+                        }
+
                         manager.removeStock(product, quantity);
                         manager.updateProductFile(products);
                     }
@@ -449,7 +487,7 @@ class SystemHandler {
                 //Create customer report
                 case 4: {
                     manager.createCustomerReport(customers);
-                    System.out.println("Successfully created customer report created\n");
+                    System.out.println("Successfully created customer report\n");
                     break;
                 }
                 //Exit the menu
@@ -488,7 +526,7 @@ class SystemHandler {
                     Product product;
                     float total = 0;
                     int quantity;
-                    System.out.println("Enter products ID or -1 to exit");
+                    System.out.println("Enter products ID or -1 to finish transaction");
                     while (true) {
                         //Get the product
                         do {
@@ -532,15 +570,17 @@ class SystemHandler {
                                             customerPoints.put(currCustomer, transactionInfo);
                                         }
                                         transaction.setCustomer(currCustomer);
+                                        System.out.println("Customer " + currCustomer.getName());
                                         int currentPoints = currCustomer.getBonusCard().getPoints();
                                         System.out.println("Reward Points: " + currentPoints);
                                         do {
                                             System.out.print("Use reward points?(Y/N): ");
                                             ch = sc.next().charAt(0);
+
                                             if (ch == 'Y') {
                                                 //Points used
-                                                customerPoints.get(currCustomer)[1] += currentPoints;
-                                                currentPoints = 0;
+                                                customerPoints.get(currCustomer)[1] += Math.min(currentPoints,(int) total);
+                                                currentPoints = (int) (currCustomer.getBonusCard().getPoints() - customerPoints.get(currCustomer)[1]);
                                             }
                                         } while (ch != 'Y' && ch != 'N');
 
@@ -554,11 +594,8 @@ class SystemHandler {
                                         //Update bonus card based on total without discount
                                         currCustomer.getBonusCard().updateBonusCard(noDiscountTotal);
                                         //Put points earned on hashmap
-                                        if (currCustomer.getBonusCard().getPoints() > currentPoints) {
-                                            customerPoints.get(currCustomer)[0] += currentPoints;
-                                        }
-
-                                        customerPoints.get(currCustomer)[2] +=total;
+                                        customerPoints.get(currCustomer)[0] += currCustomer.getBonusCard().getPoints() - currentPoints;
+                                        customerPoints.get(currCustomer)[2] += total;
                                     } else {
                                         continue;
                                     }
@@ -579,7 +616,13 @@ class SystemHandler {
                         }
                         //Get the amount of items purchases
                         System.out.print("Amount: ");
-                        quantity = sc.nextInt();
+                        try {
+                            quantity = sc.nextInt();
+                        }
+                        catch (Exception e) {
+                            System.out.println("Invalid Quantity");
+                            continue;
+                        }
                         //Check if quantity is available and remove it
                         if (product.getProductQuantity() >= quantity) {
                             transaction.addProduct(product, quantity);
@@ -615,8 +658,14 @@ class SystemHandler {
         int choice;
         do {
             System.out.print("Enter your choice: ");
-            choice = sc.nextInt();
-
+            //Get integer
+            try {
+                choice = sc.nextInt();
+            }catch (Exception e) {
+                System.out.println("Invalid choice");
+                choice = max+1;
+                break;
+            }
         } while (choice < min || choice > max);
         return choice;
     }
@@ -705,8 +754,8 @@ class SystemHandler {
                 w.write(formattedCashierTitle + "\n");
                 for (Cashier cashier : cashiers.keySet()) {
                     String formattedCashier = String.format("%-20s %-10s", cashier.getName(),
-                            " " + String.format("%.2f",cashiers.get(cashier)));
-                    w.write(formattedCashier);
+                            "€"+String.format("%.2f",cashiers.get(cashier)));
+                    w.write(formattedCashier + "\n");
                 }
             }
             //Write customers of the day (Name, Points earned/used, total spend)
@@ -717,7 +766,7 @@ class SystemHandler {
                 w.write(formattedCustomerTitle + "\n");
                 for (Customer customer : customerPoints.keySet()) {
                     String formattedCustomer = String.format("%-20s %-15s %-15s %-15s",
-                            customer.getName(), String.format("%.2f",customerPoints.get(customer)[2]), (int) customerPoints.get(customer)[0], (int) customerPoints.get(customer)[1]);
+                            customer.getName(), "€"+String.format("%.2f",customerPoints.get(customer)[2]), (int) customerPoints.get(customer)[0], (int) customerPoints.get(customer)[1]);
                     w.write(formattedCustomer + "\n");
                 }
             }

@@ -58,7 +58,6 @@ public class Transaction {
         filePath = filePath.replace(" ", "_");
         filePath = filePath.replace(":", "_");
 
-
         try {
             //Creat receipt Writer
             FileWriter receiptWriter = new FileWriter(filePath, true);
@@ -104,21 +103,21 @@ public class Transaction {
                     int productAmount = products.get(product);
                     String formattedContent = String.format("%-35s %-20s %-10s %-8s %-15s %-10s %-15s",
                             product.getProductName(), product.getProductID(), productAmount,
-                            String.format("%.2f", product.getProductPrice()),
-                            String.format("%.2f", product.getProductPrice() * productAmount),
-                            String.format("%.2f", product.getDiscountAmount() * productAmount),
-                            String.format("%.2f", product.getFinalPrice() * productAmount));
+                            "€" + String.format("%.2f", product.getProductPrice()),
+                            "€" + String.format("%.2f", product.getProductPrice() * productAmount),
+                            "€" + String.format("%.2f", product.getDiscountAmount() * productAmount),
+                            "€" + String.format("%.2f", product.getFinalPrice() * productAmount));
                     writer.write(formattedContent);
                     if (cnt == 0) {
                         total += product.getFinalPrice() * productAmount;
                         writer.write("\n");
-                        writer.write("Current Total: " + String.format("%.2f", total));
+                        writer.write("Current Total: €" + String.format("%.2f", total));
                     }
                 }
                 cnt++;
-                writer.write("\n");
-                writer.write("Reward points used: " + discount + "\n");
-                writer.write("Final Amount: " + String.format("%.2f", calculateFinalAmount()) + "\n");
+                writer.write("\n\n");
+                writer.write("Reward points used: " + discount + " (Available: " + customer.getBonusCard().getPoints() + ")\n");
+                writer.write("Final Amount: €" + String.format("%.2f", calculateFinalAmount()) + "\n");
                 writer.close();
             }
             receiptWriter.close();

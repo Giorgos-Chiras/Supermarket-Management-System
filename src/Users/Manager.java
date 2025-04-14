@@ -3,6 +3,7 @@ package Users;
 import Customer.Customer;
 import Products.Product;
 import Products.ProductCategory;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,7 +21,7 @@ public class Manager extends User {
      */
 
     /**
-        Writes product into the file
+     * Writes product into the file
      */
     public void addProduct(Product product) {
         String filePath = "src/Products/products.txt";
@@ -57,7 +58,7 @@ public class Manager extends User {
     }
 
     /**
-        Function that rewrites data to the customer file and updates with current data
+     * Function that rewrites data to the customer file and updates with current data
      */
     public void updateCustomerFile(HashSet<Customer> customers) {
         String filePath = "src/Customer/customers.txt";
@@ -77,7 +78,7 @@ public class Manager extends User {
     }
 
     /**
-        Searches and returns a product in the system
+     * Searches and returns a product in the system
      */
     public Product searchProduct(String searchID, HashSet<Product> products) {
         for (Product product : products) {
@@ -89,8 +90,8 @@ public class Manager extends User {
     }
 
     /**
-        Create a report in the src/Products/reports folder which includes
-        all products, product details  and current stock
+     * Create a report in the src/Products/reports folder which includes
+     * all products, product details  and current stock
      */
     public void crateProductReport(HashSet<Product> products) {
         //Create the report file name
@@ -148,7 +149,7 @@ public class Manager extends User {
     }
 
     /**
-        Prints all products of a category in the system
+     * Prints all products of a category in the system
      */
     public void printProducts(HashSet<Product> products, ProductCategory productCategory) {
         //Variable that keeps track if no products of that category exist
@@ -168,7 +169,7 @@ public class Manager extends User {
     }
 
     /**
-        Increases stock of a product
+     * Increases stock of a product
      */
     public void addStock(Product product, int quantity) {
         if (quantity <= 0) {
@@ -179,7 +180,7 @@ public class Manager extends User {
     }
 
     /**
-        Decreases stock of a product
+     * Decreases stock of a product
      */
     public void removeStock(Product product, int quantity) {
         if (quantity <= 0) {
@@ -189,14 +190,14 @@ public class Manager extends User {
     }
 
     /**
-        Sets product as part of weekly discount (10%)
+     * Sets product as part of weekly discount (10%)
      */
     public void setWeeklyDiscount(Product product) {
         product.setDiscount(10);
     }
 
     /**
-     Removes product from weekly discounts (0%)
+     * Removes product from weekly discounts (0%)
      */
 
     public void removeWeeklyDiscount(Product product) {
@@ -209,7 +210,7 @@ public class Manager extends User {
      */
 
     /**
-        Write customer to the file
+     * Write customer to the file
      */
     public void addCustomer(Customer customer) {
         String filePath = "src/Customer/customers.txt";
@@ -218,14 +219,14 @@ public class Manager extends User {
                 "Name: " + customer.getName(),
                 "Phone number: " + customer.getPhone(),
                 "Email: " + customer.getEmail(),
-                "Total Spend: " + String.format("%.2f",customer.getBonusCard().getTotalSpend()).replace(",", "."),
+                "Total Spend: " + String.format("%.2f", customer.getBonusCard().getTotalSpend()).replace(",", "."),
                 "Reward Points: " + customer.getBonusCard().getPoints()
         };
         addToFile(filePath, content);
     }
 
     /**
-        Function that prints all customers in the system
+     * Function that prints all customers in the system
      */
     public void printAllCustomer(HashSet<Customer> customers) {
         if (customers.isEmpty()) {
@@ -238,7 +239,7 @@ public class Manager extends User {
     }
 
     /**
-        Searches for a customer in the systems and returns it
+     * Searches for a customer in the systems and returns it
      */
     public Customer searchCustomer(String phoneNumber, HashSet<Customer> customers) {
         for (Customer customer : customers) {
@@ -248,9 +249,10 @@ public class Manager extends User {
         }
         return null;
     }
+
     /**
-     Create a report in the src/Customers/reports folder which includes
-     all customers and details
+     * Create a report in the src/Customers/reports folder which includes
+     * all customers and details
      */
     public void createCustomerReport(HashSet<Customer> customers) {
 
@@ -277,7 +279,7 @@ public class Manager extends User {
             name[i] = customerArray[i].getName();
             phone[i] = customerArray[i].getPhone();
             email[i] = customerArray[i].getEmail();
-            totalSpend[i] = String.format("%.2f",customerArray[i].getBonusCard().getTotalSpend());
+            totalSpend[i] = String.format("%.2f", customerArray[i].getBonusCard().getTotalSpend());
             points[i] = String.valueOf(customerArray[i].getBonusCard().getPoints());
         }
 
@@ -292,7 +294,7 @@ public class Manager extends User {
             //Write customer details to the file
             for (int i = 0; i < customerArray.length; i++) {
                 String formattedProduct = String.format("%-35s %-25s %-25s %-13s %-5s",
-                        name[i], phone[i], email[i], totalSpend[i], points[i]);
+                        name[i], phone[i], email[i], "€" + totalSpend[i], points[i]);
                 w.write(formattedProduct);
                 w.write("\n");
             }
