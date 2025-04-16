@@ -96,7 +96,7 @@ Username: HR_manager
 Password: HR_manager
 
 Username: manager_1
-Password: manager_1_1
+Password: manager_1
 
 Username: cashier_1
 Password: cashier_1
