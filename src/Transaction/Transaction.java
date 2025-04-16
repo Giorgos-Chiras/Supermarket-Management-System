@@ -54,7 +54,7 @@ public class Transaction {
         String date = new SimpleDateFormat("dd-MM-yyy").format(new Date());
         String time = new SimpleDateFormat("HH:mm").format(new Date());
         String fileName = customer.getName() + "_" + date + "_" + time + "receipt.txt";
-        String filePath = "src/Transaction/receipts/" + fileName;
+        String filePath = "Transaction/receipts/" + fileName;
         filePath = filePath.replace(" ", "_");
         filePath = filePath.replace(":", "_");
 
@@ -66,14 +66,14 @@ public class Transaction {
             FileWriter customerWriter = null;
             if (!customer.getName().equals("No customer")) {
                 fileName = customer.getName() + "_" + customer.getPhone() + "_transactions.txt";
-                filePath = "src/Customer/customer_transactions/" + fileName;
+                filePath = "Customer/customer_transactions/" + fileName;
                 filePath = filePath.replace(" ", "_");
                 customerWriter = new FileWriter(filePath, true);
             }
 
             //Create cashierWriter
             fileName = cashier.getName() + "_transactions.txt";
-            filePath = "src/Users/cashier_transactions/" + fileName;
+            filePath = "Users/cashier_transactions/" + fileName;
             filePath = filePath.replace(" ", "_");
             FileWriter cashierWriter = new FileWriter(filePath, true);
 

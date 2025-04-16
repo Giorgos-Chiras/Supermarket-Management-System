@@ -50,7 +50,7 @@ public class FileHandler {
      * Parses users file and adds all users to hashmap
      */
     public void parseUserFile(HashMap<User, String> users) {
-        String filePath = "src/Users/users.txt";
+        String filePath = "Users/users.txt";
         BufferedReader br;
         try {
             br = new BufferedReader(new FileReader(filePath));
@@ -111,7 +111,7 @@ public class FileHandler {
      * Parses products file and adds all products to hashset
      */
     public void parseProductFile(HashSet<Product> products) {
-        String filePath = "src/Products/products.txt";
+        String filePath = "Products/products.txt";
         BufferedReader br;
         try {
             br = new BufferedReader(new FileReader(filePath));
@@ -169,7 +169,7 @@ public class FileHandler {
      * Parse customer file and add customers to the hashset
      */
     public void parseCustomerFile(HashSet<Customer> customers) {
-        String filePath = "src/Customer/customers.txt";
+        String filePath = "Customer/customers.txt";
         BufferedReader br;
         try {
             br = new BufferedReader(new FileReader(filePath));

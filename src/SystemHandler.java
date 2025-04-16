@@ -1,16 +1,18 @@
 import Customer.Customer;
 import FileHandler.FileHandler;
+import Hasher.Hasher;
 import Products.Product;
 import Products.ProductCategory;
 import Transaction.Transaction;
 import Users.*;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import Hasher.Hasher;
-
-import static java.util.Collections.max;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
 
 
 class SystemHandler {
@@ -23,7 +25,7 @@ class SystemHandler {
     private final HashMap<Customer, float[]> customerPoints = new HashMap<>();
 
     /**
-        Constructor tha parses files nad calls login
+     * Constructor tha parses files nad calls login
      */
     SystemHandler() {
         //Parse all files
@@ -33,17 +35,8 @@ class SystemHandler {
         fh.parseCustomerFile(customers);
 
         //If no users in the system then create an HR Manager
-        if(users.isEmpty()){
-            String password = "HR_manager";
-            password = Hasher.hash(password);
-
-            HRManager temp1 = new HRManager("temp", "0");
-
-            temp1.addUser("HR_manager",password, "HR_01", UserPosition.HR_MANAGER);
-            System.out.println("No users found");
-            System.out.println("Default user added with username HR_manager and " +
-                    "password HR_manager");
-            fh.parseUserFile(users);
+        if (users.isEmpty()) {
+            createDefaultUser();
         }
 
         //Update files so they are always in the order they are in the hashmap/set
@@ -65,8 +58,8 @@ class SystemHandler {
     }
 
     /**
-        Function that gets login details and calls authenticates to see if login details
-        are correct, then get proper menu to display
+     * Function that gets login details and calls authenticates to see if login details
+     * are correct, then get proper menu to display
      */
     private void login() {
         //Login and authenticate system
@@ -110,22 +103,20 @@ class SystemHandler {
         User searchKey = new User(username, UserPosition.NONE, "0");
 
         //Check if user exists
-        if(users.containsKey(searchKey)){
+        if (users.containsKey(searchKey)) {
             //Check if password is hashed
-            if(password.equals(users.get(searchKey))){
+            if (password.equals(users.get(searchKey))) {
                 //Iterate through hashmap to get user
-                for(User user1 : users.keySet()){
-                    if(user1.equals(searchKey)){
+                for (User user1 : users.keySet()) {
+                    if (user1.equals(searchKey)) {
                         user = user1;
                         return true;
                     }
                 }
-            }
-            else{
+            } else {
                 System.out.println("Wrong password");
             }
-        }
-        else {
+        } else {
             System.out.println("User not found");
         }
 
@@ -175,18 +166,16 @@ class SystemHandler {
                     }
 
                     //Hash the password before storing it
-                    password=Hasher.hash(password);
+                    password = Hasher.hash(password);
                     hrManager.addUser(username, password, ID, position);
 
                     //Get position and upcast to correct class
-                    if(position == UserPosition.CASHIER) {
-                        users.put(new Cashier(username,  ID), password);
-                    }
-                    else if (position == UserPosition.MANAGER) {
-                        users.put(new Manager(username,  ID), password);
-                    }
-                    else if (position == UserPosition.HR_MANAGER) {
-                        users.put(new HRManager(username,  ID), password);
+                    if (position == UserPosition.CASHIER) {
+                        users.put(new Cashier(username, ID), password);
+                    } else if (position == UserPosition.MANAGER) {
+                        users.put(new Manager(username, ID), password);
+                    } else if (position == UserPosition.HR_MANAGER) {
+                        users.put(new HRManager(username, ID), password);
                     }
 
                     System.out.println("Successfully added user " + username + " with ID " + ID);
@@ -223,7 +212,7 @@ class SystemHandler {
                             break;
                         }
                         //Delete from file and remove from HashMap
-                        hrManager.deleteUser(searchKey);
+                        hrManager.deleteUser(searchKey, users);
                         users.remove(searchUser);
                         System.out.println("Successfully deleted user " + searchKey);
                     } else {
@@ -245,11 +234,11 @@ class SystemHandler {
         //Get choice for want user wants to do
         System.out.println("\n**MANAGER MENU**");
         int choice;
-        while(true) {
-        System.out.println("\nChoose which menu you want to access");
-        System.out.println("1. Product menu");
-        System.out.println("2. Customer menu");
-        System.out.println("3. Logout");
+        while (true) {
+            System.out.println("\nChoose which menu you want to access");
+            System.out.println("1. Product menu");
+            System.out.println("2. Customer menu");
+            System.out.println("3. Logout");
 
             choice = getChoice(1, 3);
             if (choice == 1) {
@@ -264,7 +253,7 @@ class SystemHandler {
 
     }
 
-    public void managerProductMenu() {
+    private void managerProductMenu() {
         Scanner sc;
         Manager manager = ((Manager) user);
         while (true) {
@@ -295,12 +284,12 @@ class SystemHandler {
                     //Get price and ensure proper price
                     System.out.print("Enter product price: ");
                     float price;
-                    while(true) {
+                    while (true) {
                         try {
                             price = sc.nextFloat();
                         } catch (Exception e) {
                             System.out.println("Invalid price entered");
-                           continue;
+                            continue;
                         }
                         break;
                     }
@@ -308,7 +297,7 @@ class SystemHandler {
                     //Get quantity and ensure proper quantity
                     System.out.print("Enter product quantity: ");
                     int quantity;
-                    while(true) {
+                    while (true) {
                         try {
                             quantity = sc.nextInt();
                         } catch (Exception e) {
@@ -322,7 +311,7 @@ class SystemHandler {
 
                     Product newProduct = new Product(name, id, price, category, quantity, 0);
                     //Check if product already exists
-                    if(products.contains(newProduct)) {
+                    if (products.contains(newProduct)) {
                         System.out.println("Product already exists");
                         break;
                     }
@@ -341,7 +330,7 @@ class SystemHandler {
                         int quantity;
                         try {
                             quantity = sc.nextInt();
-                        }catch(Exception e) {
+                        } catch (Exception e) {
                             System.out.println("Invalid quantity");
                             continue;
                         }
@@ -362,7 +351,7 @@ class SystemHandler {
                         int quantity;
                         try {
                             quantity = sc.nextInt();
-                        }catch(Exception e) {
+                        } catch (Exception e) {
                             System.out.println("Invalid quantity");
                             continue;
                         }
@@ -420,7 +409,7 @@ class SystemHandler {
     }
 
     /**
-        Menu with all options that have to do with customers
+     * Menu with all options that have to do with customers
      */
     private void managerCustomerMenu() {
         Scanner sc = new Scanner(System.in);
@@ -461,7 +450,7 @@ class SystemHandler {
                     //Update so file matches hashset
                     manager.updateCustomerFile(customers);
 
-                    System.out.println("Successfully added customer " + newCustomer.getName() +"\n");
+                    System.out.println("Successfully added customer " + newCustomer.getName() + "\n");
                     break;
                 }
 
@@ -477,7 +466,7 @@ class SystemHandler {
                     String phone = sc.nextLine();
                     Customer customer = manager.searchCustomer(phone, customers);
                     if (customer != null) {
-                        System.out.println(customer + " " + customer.getBonusCard() +"\n");
+                        System.out.println(customer + " " + customer.getBonusCard() + "\n");
                     } else {
                         System.out.println("Customer not found\n");
                     }
@@ -499,7 +488,7 @@ class SystemHandler {
     }
 
     /**
-      CASHIER MENU
+     * CASHIER MENU
      */
     private void displayCashierMenu() {
         System.out.println("** CASHIER **");
@@ -509,141 +498,29 @@ class SystemHandler {
         while (true) {
             //Print menu
             System.out.println("1. Make a transaction");
-            System.out.println("2. Exit");
-            int choice = getChoice(1, 2);
+            System.out.println("2  Search Customer");
+            System.out.println("3. Exit");
+            int choice = getChoice(1, 3);
 
             switch (choice) {
 
                 //Make a transaction
-                case 1: {
+                case 1:
+                    doTransaction();
+                    break;
+
+                //Search and print customer details
+                case 2: {
                     sc = new Scanner(System.in);
-                    //Add cashier to the cashiers of the day
-                    if (!cashiers.containsKey(cashier)) {
-                        cashiers.put(cashier, 0f);
-                    }
-                    //Create new transaction
-                    Transaction transaction = new Transaction(cashier);
-                    Product product;
-                    float total = 0;
-                    int quantity;
-                    System.out.println("Enter products ID or -1 to finish transaction");
-                    while (true) {
-                        //Get the product
-                        do {
-                            product = getProduct();
-                        } while (product == null);
+                    System.out.print("Enter customer phone number: ");
+                    String phone = sc.nextLine();
 
-                        //Exiting
-                        if (product.getProductID().equals("-1")) {
-                            System.out.println("Completing Transaction");
-                            System.out.println("Final Total: €" + String.format("%.2f",total));
-                            //Ask for bonus card
-                            char ch;
-                            do {
-                                //Get bonus card
-                                System.out.print("Does customer have a bonus card? (Y/N): ");
-                                sc = new Scanner(System.in);
-                                ch = sc.next().charAt(0);
-                                Customer currCustomer;
-                                if (ch == 'Y' || ch == 'y') {
-                                    do {
-                                        //Get the customer if customer has bonus card
-                                        System.out.print("Enter customer phone number: ");
-                                        sc = new Scanner(System.in);
-                                        String phone = sc.nextLine();
-                                        //Break out in case of mistake
-                                        if (phone.equals("-1")) {
-                                            currCustomer = null;
-                                            break;
-                                        }
-                                        //Search for customer
-                                        Manager manager = new Manager("", "");
-                                        currCustomer = manager.searchCustomer(phone, customers);
-                                        if (currCustomer == null) {
-                                            System.out.println("Customer not found");
-                                        }
-                                    } while (currCustomer == null);
-                                    //Ask customer if they want to use rewards points
-                                    if (currCustomer != null) {
-                                        float[] transactionInfo = new float[]{0f, 0f,0f};
-                                        if (!customerPoints.containsKey(currCustomer)) {
-                                            customerPoints.put(currCustomer, transactionInfo);
-                                        }
-                                        transaction.setCustomer(currCustomer);
-                                        System.out.println("Customer " + currCustomer.getName());
-                                        int currentPoints = currCustomer.getBonusCard().getPoints();
-                                        System.out.println("Reward Points: " + currentPoints);
-                                        do {
-                                            System.out.print("Use reward points?(Y/N): ");
-                                            ch = sc.next().charAt(0);
-
-                                            if (ch == 'Y') {
-                                                //Points used
-                                                customerPoints.get(currCustomer)[1] += Math.min(currentPoints,(int) total);
-                                                currentPoints = (int) (currCustomer.getBonusCard().getPoints() - customerPoints.get(currCustomer)[1]);
-                                            }
-                                        } while (ch != 'Y' && ch != 'N');
-
-                                        float noDiscountTotal = total;
-
-                                        //Apply discount and put used points into hashmap
-                                        if (ch == 'Y') {
-                                            transaction.setDiscount(currCustomer.getBonusCard().getPoints());
-                                            total = currCustomer.getBonusCard().useDiscount(total);
-                                        }
-                                        //Update bonus card based on total without discount
-                                        currCustomer.getBonusCard().updateBonusCard(noDiscountTotal);
-                                        //Put points earned on hashmap
-                                        customerPoints.get(currCustomer)[0] += currCustomer.getBonusCard().getPoints() - currentPoints;
-                                        customerPoints.get(currCustomer)[2] += total;
-                                    } else {
-                                        continue;
-                                    }
-                                }
-                                //Finish transaction and create receipt
-                                transaction.createReceipt();
-                                if (cashiers.containsKey(cashier)) {
-                                    Float cashierTotal = cashiers.get(cashier);
-                                    cashiers.put(cashier, cashierTotal + total);
-                                } else {
-                                    cashiers.put(cashier, total);
-                                }
-                                System.out.println("Final Total: €" + String.format("%.2f",total));
-                                System.out.println("Transaction Completed");
-                                break;
-                            } while (true);
-                            break;
-                        }
-                        //Get the amount of items purchases
-                        System.out.print("Amount: ");
-                        try {
-                            quantity = sc.nextInt();
-                        }
-                        catch (Exception e) {
-                            System.out.println("Invalid Quantity");
-                            continue;
-                        }
-                        //Check if quantity is available and remove it
-                        if (product.getProductQuantity() >= quantity) {
-                            transaction.addProduct(product, quantity);
-                            //Convert total to 2 decimal points
-                            total += quantity * product.getFinalPrice();
-                            total = (float) (Math.round(total * 100.0) / 100.0);
-                            product.subtractQuantity(quantity);
-
-                        } else {
-                            System.out.println("Only " + product.getProductQuantity() + " available.Transaction not completed");
-                        }
-                        System.out.println("Current total: €" + String.format("%.2f",total));
-                    }
-                    //Update the products file
-                    Manager manager = new Manager("", "");
-                    manager.updateProductFile(products);
-                    manager.updateCustomerFile(customers);
+                    cashier.printCustomerDetails(phone, customers);
                     break;
                 }
+
                 //Logout
-                case 2:
+                case 3:
                     System.out.println("Logging out\n");
                     return;
             }
@@ -651,7 +528,139 @@ class SystemHandler {
     }
 
     /**
-        Helper function that asks user for input from min - max
+     * Function that handles the entire transaction
+     */
+    private void doTransaction() {
+        Cashier cashier = ((Cashier) user);
+        Scanner sc = new Scanner(System.in);
+        //Add cashier to the cashiers of the day
+        if (!cashiers.containsKey(cashier)) {
+            cashiers.put(cashier, 0f);
+        }
+        //Create new transaction
+        Transaction transaction = new Transaction(cashier);
+        Product product;
+        float total = 0;
+        int quantity;
+        System.out.println("Enter products ID or -1 to finish transaction");
+        while (true) {
+            //Get the product
+            do {
+                product = getProduct();
+            } while (product == null);
+
+            //Exiting
+            if (product.getProductID().equals("-1")) {
+                System.out.println("Completing Transaction");
+                System.out.println("Final Total: €" + String.format("%.2f", total));
+                //Ask for bonus card
+                char ch;
+                Customer currCustomer;
+                //Get the customer if customer has bonus card
+                System.out.print("Enter customer phone number: ");
+                sc = new Scanner(System.in);
+                String phone = sc.nextLine();
+
+                //Search for customer
+                currCustomer = cashier.searchCustomer(phone, customers);
+                //Ask customer if they want to use rewards points
+                if (currCustomer != null) {
+                    float[] transactionInfo = new float[]{0f, 0f, 0f};
+                    if (!customerPoints.containsKey(currCustomer)) {
+                        customerPoints.put(currCustomer, transactionInfo);
+                    }
+                    transaction.setCustomer(currCustomer);
+                    System.out.println("Customer " + currCustomer.getName());
+                    int currentPoints = currCustomer.getBonusCard().getPoints();
+                    System.out.println("Reward Points: " + currentPoints);
+                    do {
+                        System.out.print("Use reward points?(Y/N): ");
+                        ch = sc.next().charAt(0);
+
+                        if (ch == 'Y') {
+                            //Points used
+                            customerPoints.get(currCustomer)[1] += Math.min(currentPoints, (int) total);
+                            currentPoints = (int) (currCustomer.getBonusCard().getPoints() - customerPoints.get(currCustomer)[1]);
+                        }
+                    } while (ch != 'Y' && ch != 'N');
+
+                    float noDiscountTotal = total;
+
+                    //Apply discount and put used points into hashmap
+                    if (ch == 'Y') {
+                        transaction.setDiscount(currCustomer.getBonusCard().getPoints());
+                        total = currCustomer.getBonusCard().useDiscount(total);
+                    }
+                    //Update bonus card based on total without discount
+                    currCustomer.getBonusCard().updateBonusCard(noDiscountTotal);
+                    //Put points earned on hashmap
+                    customerPoints.get(currCustomer)[0] += currCustomer.getBonusCard().getPoints() - currentPoints;
+                    customerPoints.get(currCustomer)[2] += total;
+                }
+
+                //Finish transaction and create receipt
+                transaction.createReceipt();
+                if (cashiers.containsKey(cashier)) {
+                    Float cashierTotal = cashiers.get(cashier);
+                    cashiers.put(cashier, cashierTotal + total);
+                } else {
+                    cashiers.put(cashier, total);
+                }
+                System.out.println("Final Total: €" + String.format("%.2f", total));
+                System.out.println("Transaction Completed");
+                break;
+            }
+            //Get the amount of items purchases
+            System.out.print("Amount: ");
+            try {
+                quantity = sc.nextInt();
+                if (quantity <= 0) {
+                    System.out.println("Invalid Quantity");
+                    continue;
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid Quantity");
+                continue;
+            }
+            //Check if quantity is available and remove it
+            if (product.getProductQuantity() >= quantity) {
+                transaction.addProduct(product, quantity);
+                //Convert total to 2 decimal points
+                total += quantity * product.getFinalPrice();
+                total = (float) (Math.round(total * 100.0) / 100.0);
+                product.subtractQuantity(quantity);
+
+            } else {
+                System.out.println("Only " + product.getProductQuantity() + " available.Transaction not completed");
+            }
+            System.out.println("Current total: €" + String.format("%.2f", total));
+        }
+        //Update the products file
+        Manager manager = new Manager("", "");
+        manager.updateProductFile(products);
+        manager.updateCustomerFile(customers);
+
+    }
+
+    /**
+     * Helper function that creates a default user in case no user is registered in the system
+     */
+    private void createDefaultUser() {
+        String password = "HR_manager";
+        password = Hasher.hash(password);
+
+        HRManager temp1 = new HRManager("temp", "0");
+
+        temp1.addUser("HR_manager", password, "HR_01", UserPosition.HR_MANAGER);
+        System.out.println("No users found");
+        System.out.println("Default user added with username HR_manager and " +
+                "password HR_manager");
+        FileHandler fileHandler = new FileHandler();
+        fileHandler.parseUserFile(users);
+    }
+
+    /**
+     * Helper function that asks user for input from min - max
      */
     private int getChoice(int min, int max) {
         Scanner sc = new Scanner(System.in);
@@ -661,9 +670,9 @@ class SystemHandler {
             //Get integer
             try {
                 choice = sc.nextInt();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("Invalid choice");
-                choice = max+1;
+                choice = max + 1;
                 break;
             }
         } while (choice < min || choice > max);
@@ -716,13 +725,13 @@ class SystemHandler {
         System.out.print("\t7. Pantry\n");
         System.out.print("\t8. Household\n");
         System.out.print("\t9. Personal Care\n");
-        int categoryChoice = getChoice(1,9);
+        int categoryChoice = getChoice(1, 9);
         return ProductCategory.values()[categoryChoice - 1];
     }
 
     /**
-      Create a report of what happened from when the system started until it closed
-      Includes customer of the day details, cashiers of the day details and product report
+     * Create a report of what happened from when the system started until it closed
+     * Includes customer of the day details, cashiers of the day details and product report
      */
     private void createClosureReport() {
         //Create file name
@@ -731,7 +740,7 @@ class SystemHandler {
         time = time.replace(":", "-");
 
         String fileName = "ClosureReport" + "_" + date + "_" + time + ".txt";
-        String filePath = "src/closure_reports/" + fileName;
+        String filePath = "closure_reports/" + fileName;
 
         try {
             //Write product report
@@ -739,10 +748,10 @@ class SystemHandler {
             w.write("\t\tCLOSURE REPORT " + date + " @ " + time.replace("-", ":") + "\n");
             w.write("\n\n**PRODUCTS STOCK**\n\n");
 
-            String formattedProductTitle = String.format("%-25s %-10s", "Product Name" , "Quantity");
+            String formattedProductTitle = String.format("%-25s %-10s", "Product Name", "Quantity");
             w.write(formattedProductTitle + "\n");
             for (Product product : products) {
-                String formattedProduct = String.format("%-25s %-10s", product.getProductName() , product.getProductQuantity());
+                String formattedProduct = String.format("%-25s %-10s", product.getProductName(), product.getProductQuantity());
                 w.write(formattedProduct + "\n");
             }
             //Write cashiers of the day(Name, Total Sales)
@@ -750,11 +759,11 @@ class SystemHandler {
                 w.write("No transactions made today\n");
             } else {
                 w.write("\n** CASHIERS **\n\n");
-                String formattedCashierTitle = String.format("%-20s %-10s", "Cashier" , "Total Sales");
+                String formattedCashierTitle = String.format("%-20s %-10s", "Cashier", "Total Sales");
                 w.write(formattedCashierTitle + "\n");
                 for (Cashier cashier : cashiers.keySet()) {
                     String formattedCashier = String.format("%-20s %-10s", cashier.getName(),
-                            "€"+String.format("%.2f",cashiers.get(cashier)));
+                            "€" + String.format("%.2f", cashiers.get(cashier)));
                     w.write(formattedCashier + "\n");
                 }
             }
@@ -762,11 +771,11 @@ class SystemHandler {
             if (!customerPoints.isEmpty()) {
                 w.write("\n\n** CUSTOMERS **\n\n");
                 String formattedCustomerTitle = String.format("%-20s %-15s %-15s %-15s",
-                        "Name" , "Total Spend", "Points Earned", "Points Used");
+                        "Name", "Total Spend", "Points Earned", "Points Used");
                 w.write(formattedCustomerTitle + "\n");
                 for (Customer customer : customerPoints.keySet()) {
                     String formattedCustomer = String.format("%-20s %-15s %-15s %-15s",
-                            customer.getName(), "€"+String.format("%.2f",customerPoints.get(customer)[2]), (int) customerPoints.get(customer)[0], (int) customerPoints.get(customer)[1]);
+                            customer.getName(), "€" + String.format("%.2f", customerPoints.get(customer)[2]), (int) customerPoints.get(customer)[0], (int) customerPoints.get(customer)[1]);
                     w.write(formattedCustomer + "\n");
                 }
             }
@@ -775,10 +784,9 @@ class SystemHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }
+
 
 
 

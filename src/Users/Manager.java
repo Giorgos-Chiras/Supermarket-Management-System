@@ -24,7 +24,7 @@ public class Manager extends User {
      * Writes product into the file
      */
     public void addProduct(Product product) {
-        String filePath = "src/Products/products.txt";
+        String filePath = "Products/products.txt";
         //Write the content that will be included to the file as a string array
         String[] content = new String[]{
                 "Name: " + product.getProductName(),
@@ -41,7 +41,7 @@ public class Manager extends User {
      * Function that rewrites data to the file and updates with current data
      */
     public void updateProductFile(HashSet<Product> products) {
-        String filePath = "src/Products/products.txt";
+        String filePath = "Products/products.txt";
         File file = new File(filePath);
         try {
             //Reset the file
@@ -61,7 +61,7 @@ public class Manager extends User {
      * Function that rewrites data to the customer file and updates with current data
      */
     public void updateCustomerFile(HashSet<Customer> customers) {
-        String filePath = "src/Customer/customers.txt";
+        String filePath = "Customer/customers.txt";
         File file = new File(filePath);
         try {
             //Reset the file
@@ -99,7 +99,7 @@ public class Manager extends User {
         String time = new SimpleDateFormat("HH:mm").format(new Date());
         time = time.replace(":", "-");
         String fileName = "ProductReport" + "_" + date + "_" + time + ".txt";
-        String filePath = "src/Products/reports/" + fileName;
+        String filePath = "Products/reports/" + fileName;
 
         //Create empty arrays
         String[] name = new String[products.size()];
@@ -213,7 +213,7 @@ public class Manager extends User {
      * Write customer to the file
      */
     public void addCustomer(Customer customer) {
-        String filePath = "src/Customer/customers.txt";
+        String filePath = "Customer/customers.txt";
         //Write the content that will be included to the file as a string array
         String[] content = new String[]{
                 "Name: " + customer.getName(),
@@ -251,7 +251,7 @@ public class Manager extends User {
     }
 
     /**
-     * Create a report in the src/Customers/reports folder which includes
+     * Create a report in the Customers/reports folder which includes
      * all customers and details
      */
     public void createCustomerReport(HashSet<Customer> customers) {
@@ -261,7 +261,7 @@ public class Manager extends User {
         String time = new SimpleDateFormat("HH:mm").format(new Date());
         time = time.replace(":", "-");
         String fileName = "CustomersReport" + "_" + date + "_" + time + ".txt";
-        String filePath = "src/Customer/reports/" + fileName;
+        String filePath = "Customer/reports/" + fileName;
 
         //Create an array for each of customer details
         String[] name = new String[customers.size()];
