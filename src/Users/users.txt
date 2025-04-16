@@ -8,7 +8,6 @@ Password: e7923c23c8154f162a56c19de27b16ff
 ID: MA01
 Position: MANAGER
 
-
 Username: cashier_1
 Password: d3921679221e1999953721311f4bd78
 ID: CA01
